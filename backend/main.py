@@ -1,4 +1,5 @@
-from flask import Flask, Request, Response
+from flask import Flask, Response, request
+from flask_cors import cross_origin
 from utils import *
 from concater import Concater
 
@@ -6,20 +7,21 @@ app = Flask("playreport concat server")
 concater = Concater()
 
 @app.route('/concat', methods=["POST"])
-def concat(request: Request) -> Response:
+@cross_origin(origins=["http://localhost:5173"], methods=["POST"])
+def concat() -> Response:
   if request.method != "POST":
     return Response("accept method is POST only", 400)
-  
+  print(request.files)
   playreports: list[np.ndarray] = []
-  if "playreport_01" in request.files:
-    playreport_01 = request.files["playreport_01"].stream
-    playreports.append(readFileFromStream(playreport_01))
-  if "playreport_02" in request.files:
-    playreport_02 = request.files["playreport_02"].stream
-    playreports.append(readFileFromStream(playreport_02))
-  if "playreport_03" in request.files:
-    playreport_03 = request.files["playreport_03"].stream
-    playreports.append(readFileFromStream(playreport_03))
+  if "playreport_0" in request.files:
+    playreport_0 = request.files["playreport_0"].stream
+    playreports.append(readFileFromStream(playreport_0))
+  if "playreport_1" in request.files:
+    playreport_1 = request.files["playreport_1"].stream
+    playreports.append(readFileFromStream(playreport_1))
+  if "playreport_2" in request.files:
+    playreport_2 = request.files["playreport_2"].stream
+    playreports.append(readFileFromStream(playreport_2))
 
   try:
     concated = concater.concatPlayReport(playreports)
@@ -27,3 +29,6 @@ def concat(request: Request) -> Response:
     return res
   except:
     return "Error", 500
+  
+if __name__ == '__main__':
+  app.run(port="5000")
