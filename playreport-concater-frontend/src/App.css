@@ -1,0 +1,43 @@
+.thumbnail {
+  width: 30vw
+}
+
+.result {
+  height: 80vh;
+}
+
+.center {
+  text-align: center;
+}
+
+.spacer {
+  height: 1em;
+}
+
+.btn-square {
+  display: inline-block;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  background: #66b1ea;/*ボタン色*/
+  color: #FFF;
+  border: 0;
+  border-radius: 5px;
+  outline: thin solid #FFFFFF;
+  outline-offset: -5px;
+  box-shadow: 0px 3px #457cc3;
+}
+
+.btn-square:active {
+  /*ボタンを押したとき*/
+  -webkit-transform: translateY(4px);
+  transform: translateY(4px);/*下に動く*/
+  border-bottom: none;/*線を消す*/
+}
+
+.submit-btn {
+  font-size: 1.5em;
+}
+
+input {
+  display: none;
+}
