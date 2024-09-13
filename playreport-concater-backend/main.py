@@ -11,7 +11,6 @@ concater = Concater()
 def concat() -> Response:
   if request.method != "POST":
     return Response("accept method is POST only", 400)
-  print(request.files)
   playreports: list[np.ndarray] = []
   if "playreport_0" in request.files:
     playreport_0 = request.files["playreport_0"].stream
@@ -22,7 +21,6 @@ def concat() -> Response:
   if "playreport_2" in request.files:
     playreport_2 = request.files["playreport_2"].stream
     playreports.append(readFileFromStream(playreport_2))
-
   try:
     concated = concater.concatPlayReport(playreports)
     res = makePngResponse(concated)

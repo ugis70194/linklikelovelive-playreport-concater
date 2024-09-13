@@ -41,11 +41,12 @@ class Concater:
     Returns:
       cliped_img (numpy.ndarray): 明るいところだけ切り抜いた画像
     """
+    
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # 二値化は幸せになるんだ
     nichika = (gray > 128) * 1
-    top, bottom = self._clip(nichika, 128)
-    left, right = self._clip(nichika.T, 128)
+    top, bottom = self._clip(nichika)
+    left, right = self._clip(nichika.T)
     return img[top:bottom, left:right]
 
   def _noiseFilter(self, diff_img: np.ndarray, threshold = 0.3) -> np.ndarray:
@@ -90,10 +91,13 @@ class Concater:
     assert(len(imgs) >= 2)
     # グレースケール化
     grays = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for img in imgs]
-    # ノイズ除去 差分画像
-    diff = self._noiseFilter(grays[0] - grays[1])
+    # 差分画像
+    diff = grays[0] - grays[1]
+    # マスク画像
+    mask = self._noiseFilter(diff)
     # スキルレポート部分の上端と下端を計算
-    top, bottom = self._clip(diff)
+    top, bottom = self._clip(mask)
+    top -= 5
     # スキルレポート部分を抜き出す
     skillReports = [img[top:bottom] for img in imgs]
     
@@ -110,11 +114,11 @@ class Concater:
     Returns:
       concated_img (numpy.ndarray): 連結されたプレイレポート
     """
+    
     # 明るいところだけ抜き出す
     imgs = [self._clipBrightArea(img) for img in imgs]
     # スコアとスキルレポートだけ抜き出す
-    score, skillReports = self._clipSkillReport(imgs)
-
+    score, skillReports = self._clipsScoreAndSkillReport(imgs)
     # 連結
     stitcher = cv2.Stitcher.create(cv2.Stitcher_SCANS)
     _, stitchedImg = stitcher.stitch(skillReports)

@@ -1,36 +1,19 @@
 import { useState } from 'react'
 import './App.css'
-import imageCompression, { Options } from 'browser-image-compression';
 
 function App() {
-  const imageCompressOptions: Options = {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1024,
-    useWebWorker: true,
-    fileType: 'image/png',
-    initialQuality: 0.85
-  }
-
   const serverURL = "http://localhost:5000/concat";
   const postOptions = {
     method: "POST",
     body: new FormData()
   };
 
-  const [playReports, setPlayReports] = useState<File[]>([]);
-  const [stats,       setStats]       = useState<File>(new File([], ""));
-  const [bonus,       setBonus]       = useState<File>(new File([], ""));
-  const [result,      setResult]      = useState<File>(new File([], ""));
-
-  const compressImage = async (image: File) => {
-    try {
-      const compressed = await imageCompression(image, imageCompressOptions);
-      return compressed;
-    } catch (err) {
-      console.log(err);
-    }
-    return null;
-  }
+  const [playReports,        setPlayReports]        = useState<File[]>([]);
+  const [stats,              setStats]              = useState<File>(new File([], ""));
+  const [bonus,              setBonus]              = useState<File>(new File([], ""));
+  const [result,             setResult]             = useState<File>(new File([], ""));
+  const [selectedPlayReport, setSelectedPlayReport] = useState<boolean>(false);
+  const [selectedOption, setSelectedOption]         = useState<boolean>(false);
 
   const inputPlayReports = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const images = e.target!.files;
@@ -39,21 +22,17 @@ function App() {
       return;
     }
 
-    const compressedImages: File[] = [];
-    let i = 0;
-    for(const image of images) {
-      const compressed = await compressImage(image);
-      if (compressed === null) {
-        console.log('null');
-      } else {
-        compressedImages.push(new File([compressed], `playreport_${i}`, { type: compressed.type }));
-        i++;
-      }
+    setSelectedPlayReport(true);
+
+    const tmp: File[] = [];
+    for(let i = 0; i < images.length; i++) {
+      const img = images[i];
+      tmp.push(new File([img], `playreport_${i}`, { type: "image/png"}));
     }
 
-    setPlayReports(compressedImages);
-    //const anchorPlayReport = document.getElementById("anchor-playreport");
-    //anchorPlayReport?.click();
+    setPlayReports(tmp);
+    const anchorPlayReport = document.getElementById("anchor-playreport");
+    anchorPlayReport?.click();
   }
 
   const inputStats = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,13 +40,13 @@ function App() {
     if (image === null) {
       return;
     }
-
-    const compressed = await compressImage(image[0]);
-    if (compressed === null) {
-      console.log('null');
-    } else {
-      setStats(new File([compressed], `stats`, { type: compressed.type }));
+    setSelectedOption(true);
+    for(const img of image) {
+      setStats(new File([img], `stats`, { type: img.type }));
     }
+
+    const anchorPlayReport = document.getElementById("anchor-playreport");
+    anchorPlayReport?.click();
   }
 
   const inputBonus = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,13 +54,13 @@ function App() {
     if (image === null) {
       return;
     }
-
-    const compressed = await compressImage(image[0]);
-    if (compressed === null) {
-      console.log('null');
-    } else {
-      setBonus(new File([compressed], `bonus`, { type: compressed.type }));
+    setSelectedOption(true);
+    for(const img of image) {
+      setBonus(new File([img], `bonus`, { type: img.type }));
     }
+
+    const anchorPlayReport = document.getElementById("anchor-playreport");
+    anchorPlayReport?.click();
   }
 
   const sendImages = async () => {
@@ -102,13 +81,11 @@ function App() {
     }
 
     postOptions.body = formData;
-    for(const [key, value] of formData.entries()) {
-      console.log(key, value)
-    }
     
     const response = await fetch(serverURL, postOptions);
-    const res_json = await response.json();
-    console.log(res_json);
+    const blob = await response.blob();
+    const file = new File([blob], `result`, { type: "image/png" });
+    setResult(file)
   }
 
   return (
@@ -121,25 +98,20 @@ function App() {
             <input type='file' accept='image/*' onChange={inputPlayReports} multiple />
           </label>
           <div className='spacer' />
-          <div>
+          <div className={selectedPlayReport ? "thumb" : ""}>
             {playReports.map((img, idx) => <img key={idx} className='thumbnail' src={URL.createObjectURL(img)} />)}
           </div>
-          <a id='anchor-playreport' href="#bottom-playreport"/>
-          <a id='bottom-playreport' />
         </div>
       </div>
       <div>
         <p>オプション</p>
-        <p>結合したプレイレポートの横にステータス画面とボーナス画面を結合できます。（片方だけでも結合できます）</p>
+        <p>結合したプレイレポートの横にシミュレーション画面とボーナス画面を結合できます。（片方だけでも結合できます）</p>
         <div className='center'>
           <label className='btn-square'>
-            ステータス画面を選択
+            シミュレーション画面を選択
             <input type='file' accept='image/*' onChange={inputStats} />
           </label>
           <div className='spacer' />
-          {
-            stats.size > 0 && <img className='thumbnail' src={URL.createObjectURL(stats)} />
-          }
         </div>
         <div className='center'>
           <label className='btn-square'>
@@ -147,15 +119,23 @@ function App() {
             <input type='file' accept='image/*' onChange={inputBonus} />
           </label>
           <div className='spacer' />
-          {
-            bonus.size > 0 && <img className='thumbnail' src={URL.createObjectURL(bonus)} />
-          }
+          <div className={selectedOption ? "thumb" : ""}>
+            {
+              stats.size > 0 && <img className='thumbnail' src={URL.createObjectURL(stats)} />
+            }
+            {
+              bonus.size > 0 && <img className='thumbnail' src={URL.createObjectURL(bonus)} />
+            }
+          </div>
         </div>
       </div>
+      <div className='spacer' />
       <div className='center'>
-        <button className='btn-square submit-btn' type='submit' onClick={sendImages}>くっつける</button>
+        <button className="btn-square submit-btn" type='submit' onClick={sendImages}>くっつける</button>
       </div>
       <div className='spacer' />
+      <a id='anchor-playreport' href="#bottom"/>
+      <a id='bottom' />
       <div className='center'>
         {
           result.size > 0 && <img className='result' src={URL.createObjectURL(result)} />

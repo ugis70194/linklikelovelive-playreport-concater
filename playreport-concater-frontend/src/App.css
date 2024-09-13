@@ -26,6 +26,9 @@
   outline-offset: -5px;
   box-shadow: 0px 3px #457cc3;
 }
+.thumb {
+  height: 64vw;
+}
 
 .btn-square:active {
   /*ボタンを押したとき*/
