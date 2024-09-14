@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import './App.css'
+import './ConcatPlayReport.css'
+import sample from './assets/concat_sample.webp'
 
-function App() {
+function ConcatPlayReport() {
   const serverURL = "http://localhost:5000/concat";
   const postOptions = {
     method: "POST",
@@ -89,7 +90,13 @@ function App() {
   }
 
   return (
-    <>
+    <div className='concat-root'>
+      <div>
+        <p>複数枚に分かれてしまうプレイレポートを結合します</p>
+        <div className='center'>
+          <img alt="結合サンプル" src={sample} style={{width: "85vw"}}/>
+        </div>
+      </div>
       <div>
         <p>くっつけたいスクリーンショットを2つ、または3つ選択してください(順不同)</p>
         <div className='center'>
@@ -103,7 +110,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div>
+      <div style={{display: "none"}}>
         <p>オプション</p>
         <p>結合したプレイレポートの横にシミュレーション画面とボーナス画面を結合できます。（片方だけでも結合できます）</p>
         <div className='center'>
@@ -141,8 +148,8 @@ function App() {
           result.size > 0 && <img className='result' src={URL.createObjectURL(result)} />
         }
       </div>
-    </>
+    </div>
   )
 }
 
-export default App
+export default ConcatPlayReport
