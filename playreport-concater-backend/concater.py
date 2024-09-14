@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import time
 # 全画像グレースケール化 -> 明るいところだけ抜き出す
 # 抜き出した画像を元の画像として扱う
 # 差分画像をとってノイズ除去
@@ -9,7 +9,7 @@ import numpy as np
 # 連結した画像を出力
 
 class Concater:
-  def _clip(self, binray_img: np.ndarray):
+  def _clip(self, binray_img: np.ndarray, top = 0):
     """画像の明るいところの上端と下端を返す
 
     Args:
@@ -22,8 +22,6 @@ class Concater:
     assert(binray_img.ndim == 2)
 
     height, width = np.shape(binray_img)
-
-    top = 0
     while(binray_img[top].sum() < width/2 and top < height):
       top += 1
 
@@ -59,23 +57,20 @@ class Concater:
       filtered_img (numpy.ndarray): フィルタされた画像
     """
     assert(diff_img.ndim == 2)
+    stack = []
 
     height, width = np.shape(diff_img)
-    for h_s in range(0, height, 30):
-        h_t = min(h_s+30, height)
-        count = 0
-        for h in range(h_s, h_t):
-            for w in range(width):
-                if diff_img[h][w] != 0: count += 1
-        if count <= height*(h_t-h_s)*threshold:
-            for h in range(h_s, h_t):
-                for w in range(width):
-                    diff_img[h][w] = 0
+    step = 50
+    for h_s in range(0, height, step):
+        h_t = min(h_s+step, height)
+        target = diff_img[h_s:h_t]
+        if np.sum(target) <= height*(h_t-h_s)*threshold:
+          stack.append(np.zeros((h_t-h_s, width)))
         else:
-            for h in range(h_s, h_t):
-              for w in range(width):
-                  diff_img[h][w] = 1
-    return diff_img
+          stack.append(np.ones((h_t-h_s, width)))
+    
+    mask = np.vstack(stack)
+    return mask
   
   def _clipsScoreAndSkillReport(self, imgs: list[np.ndarray]) -> list[np.ndarray]:
     """スコアとスキルレポート部分を抜き出す
@@ -92,11 +87,12 @@ class Concater:
     # グレースケール化
     grays = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for img in imgs]
     # 差分画像
-    diff = grays[0] - grays[1]
-    # マスク画像
-    mask = self._noiseFilter(diff)
+    diff = abs(grays[0] - grays[1])
+    nichika = (diff > 128) * 1
+    h, w = np.shape(nichika)
     # スキルレポート部分の上端と下端を計算
-    top, bottom = self._clip(mask)
+    
+    top, bottom = self._clip(nichika, int(h*0.25))
     top -= 5
     # スキルレポート部分を抜き出す
     skillReports = [img[top:bottom] for img in imgs]
@@ -119,6 +115,7 @@ class Concater:
     imgs = [self._clipBrightArea(img) for img in imgs]
     # スコアとスキルレポートだけ抜き出す
     score, skillReports = self._clipsScoreAndSkillReport(imgs)
+
     # 連結
     stitcher = cv2.Stitcher.create(cv2.Stitcher_SCANS)
     _, stitchedImg = stitcher.stitch(skillReports)

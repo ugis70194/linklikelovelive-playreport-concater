@@ -2,6 +2,7 @@ from flask import Flask, Response, request
 from flask_cors import cross_origin
 from utils import *
 from concater import Concater
+import time
 
 app = Flask("playreport concat server")
 concater = Concater()
