@@ -3,7 +3,7 @@ import './ConcatPlayReport.css'
 import sample from './assets/concat_sample.webp'
 
 function ConcatPlayReport() {
-  const serverURL = "http://localhost:5000/concat";
+  const serverURL = "https://concat-wumcxnesmq-dt.a.run.app/";
   const postOptions = {
     method: "POST",
     body: new FormData()
@@ -94,7 +94,7 @@ function ConcatPlayReport() {
       <div>
         <p>複数枚に分かれてしまうプレイレポートを結合します</p>
         <div className='center'>
-          <img alt="結合サンプル" src={sample} style={{width: "85vw"}}/>
+          <img alt="結合サンプル" src={sample} style={{height:"30vh"}}/>
         </div>
       </div>
       <div>

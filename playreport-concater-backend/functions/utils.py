@@ -19,4 +19,5 @@ def makePngResponse(img: np.ndarray) -> Response:
   res = make_response(bytedata)
   res.headers["Content-Type"] = "image/png"
   res.headers["Content-Disposition"] = "attachment; filename=playreport"
+  res.status_code = 200
   return res

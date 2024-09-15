@@ -1,15 +1,26 @@
-from flask import Flask, Response, request
-from flask_cors import cross_origin
+from firebase_functions import https_fn, options
+from firebase_admin import initialize_app
 from utils import *
 from concater import Concater
-import time
+import os
 
-app = Flask("playreport concat server")
+app = initialize_app(name="playreport concat server")
 concater = Concater()
 
-@app.route('/concat', methods=["POST"])
-@cross_origin(origins=["http://localhost:5173"], methods=["POST"])
-def concat() -> Response:
+PROJECT_NAME = os.environ.get("GCLOUD_PROJECT")
+TARGET = os.environ.get("FUNCTION_TARGET")
+
+@https_fn.on_request(
+  region='asia-northeast2',
+  cors=options.CorsOptions(
+    cors_origins=[
+      f"https://{PROJECT_NAME}.web.app", 
+      f"https://{PROJECT_NAME}.firebaseapp.com"
+    ],
+    cors_methods=["post"]
+  )
+)
+def concat(request: https_fn.Request) -> https_fn.Response:
   if request.method != "POST":
     return Response("accept method is POST only", 400)
   playreports: list[np.ndarray] = []
