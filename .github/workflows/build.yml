@@ -1,0 +1,13 @@
+name: build
+run-name: build and marge main branch
+on: [push]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "triggered by a ${{ github.event_name }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
