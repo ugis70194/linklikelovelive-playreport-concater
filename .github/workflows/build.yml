@@ -1,6 +1,9 @@
 name: build
 run-name: build and marge main branch
-on: [push]
+on:
+  push:
+    branches:
+      - develop
 jobs:
   Build:
     runs-on: ubuntu-latest

@@ -3,18 +3,20 @@ import './ConcatPlayReport.css'
 import sample from './assets/concat_sample.webp'
 
 function ConcatPlayReport() {
-  const serverURL = "https://concat-wumcxnesmq-dt.a.run.app/";
+  const serverURL = "https://concat-jdkscuuhxq-dt.a.run.app";
   const postOptions = {
     method: "POST",
     body: new FormData()
   };
 
-  const [playReports,        setPlayReports]        = useState<File[]>([]);
-  const [stats,              setStats]              = useState<File>(new File([], ""));
-  const [bonus,              setBonus]              = useState<File>(new File([], ""));
-  const [result,             setResult]             = useState<File>(new File([], ""));
+  const [playReports,        setPlayReports       ] = useState<File[]>([]);
+  const [stats,              setStats             ] = useState<File>(new File([], ""));
+  const [bonus,              setBonus             ] = useState<File>(new File([], ""));
+  const [result,             setResult            ] = useState<File>(new File([], ""));
   const [selectedPlayReport, setSelectedPlayReport] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption]         = useState<boolean>(false);
+  const [selectedOption,     setSelectedOption    ] = useState<boolean>(false);
+  const [waitingResponse,    setWaitingResponse   ] = useState<boolean>(false);
+  const [errorOccured,       setErrorOccured      ] = useState<boolean>(false);
 
   const inputPlayReports = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const images = e.target!.files;
@@ -66,6 +68,8 @@ function ConcatPlayReport() {
 
   const sendImages = async () => {
     const formData = new FormData();
+    setWaitingResponse(true);
+    setErrorOccured(false);
     if (playReports.length >= 2) {
       for(const playReport of playReports) {
         formData.append(playReport.name, playReport)
@@ -83,18 +87,26 @@ function ConcatPlayReport() {
 
     postOptions.body = formData;
     
-    const response = await fetch(serverURL, postOptions);
-    const blob = await response.blob();
-    const file = new File([blob], `result`, { type: "image/png" });
-    setResult(file)
+    try {
+      const response = await fetch(serverURL, postOptions);
+      const blob = await response.blob();
+      const file = new File([blob], `result`, { type: "image/png" });
+      setResult(file)
+    } catch {
+      setErrorOccured(true);
+    }
+
+    setWaitingResponse(false);
+      
+    
   }
 
   return (
-    <div className='concat-root'>
+    <div>
       <div>
         <p>複数枚に分かれてしまうプレイレポートを結合します</p>
         <div className='center'>
-          <img alt="結合サンプル" src={sample} style={{height:"30vh"}}/>
+          <img className='sample' alt="結合サンプル" src={sample} />
         </div>
       </div>
       <div>
@@ -138,11 +150,19 @@ function ConcatPlayReport() {
       </div>
       <div className='spacer' />
       <div className='center'>
-        <button className="btn-square submit-btn" type='submit' onClick={sendImages}>くっつける</button>
+        <button 
+          className={(selectedPlayReport ? "btn-square" : "disable") + " submit-btn"} 
+          type='submit' onClick={sendImages}
+          disabled={!selectedPlayReport}
+          >くっつける</button>
       </div>
       <div className='spacer' />
       <a id='anchor-playreport' href="#bottom"/>
       <a id='bottom' />
+      <div className='center'>
+        { waitingResponse ? <h2>Processing...</h2> : <></> }
+        { errorOccured    ? <p className='error'>プレイレポートを結合できませんでした <br/> もう一度お試しください</p> : <></> }
+      </div>
       <div className='center'>
         {
           result.size > 0 && <img className='result' src={URL.createObjectURL(result)} />

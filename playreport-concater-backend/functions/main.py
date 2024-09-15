@@ -7,15 +7,12 @@ import os
 app = initialize_app(name="playreport concat server")
 concater = Concater()
 
-PROJECT_NAME = os.environ.get("GCLOUD_PROJECT")
-TARGET = os.environ.get("FUNCTION_TARGET")
-
 @https_fn.on_request(
   region='asia-northeast2',
   cors=options.CorsOptions(
     cors_origins=[
-      f"https://{PROJECT_NAME}.web.app", 
-      f"https://{PROJECT_NAME}.firebaseapp.com"
+      "https://school-idol-stage-supporter.web.app", 
+      "https://school-idol-stage-supporter.firebaseapp.com"
     ],
     cors_methods=["post"]
   )
