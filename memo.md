@@ -16,3 +16,10 @@ firebase_functions は flask の派生クラスなので、基本的なやりと
 パッケージは bun で管理
 `bun run dev` で開発環境が起動する
 `bun build` でビルドが走る
+
+# やること
+
+google analytics を入れる
+main に push/merge したら自動でビルドしてデプロイできるようにする
+カンストテーブルを移植する
+フロントからコンテンツを更新できるようにする

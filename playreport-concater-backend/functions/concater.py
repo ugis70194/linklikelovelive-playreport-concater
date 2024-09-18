@@ -22,7 +22,7 @@ class Concater:
     assert(binray_img.ndim == 2)
 
     height, width = np.shape(binray_img)
-    while(binray_img[top].sum() < width/2 and top < height):
+    while(binray_img[top].sum() < width/4 and top < height):
       top += 1
 
     bottom = top
@@ -93,9 +93,10 @@ class Concater:
     # スキルレポート部分の上端と下端を計算
     
     top, bottom = self._clip(nichika, int(h*0.25))
-    top -= 5
     # スキルレポート部分を抜き出す
     skillReports = [img[top:bottom] for img in imgs]
+    #print(top, bottom)
+    #[cv2.imwrite(f"./img/skillreport_{i}.png", img) for i, img in enumerate(skillReports)]
     
     score = imgs[0][0:top]
 

@@ -4,6 +4,7 @@ import sample from './assets/concat_sample.webp'
 
 function ConcatPlayReport() {
   const serverURL = "https://concat-jdkscuuhxq-dt.a.run.app";
+  //const serverURL = "http://localhost:5000/concat";
   const postOptions = {
     method: "POST",
     body: new FormData()
@@ -84,9 +85,10 @@ function ConcatPlayReport() {
     if (bonus.size > 0) {
       formData.append(bonus.name, bonus);
     }
+    const anchorPlayReport = document.getElementById("anchor-playreport");
+    anchorPlayReport?.click();
 
     postOptions.body = formData;
-    
     try {
       const response = await fetch(serverURL, postOptions);
       const blob = await response.blob();
@@ -97,8 +99,6 @@ function ConcatPlayReport() {
     }
 
     setWaitingResponse(false);
-      
-    
   }
 
   return (
@@ -108,6 +108,7 @@ function ConcatPlayReport() {
         <div className='center'>
           <img className='sample' alt="結合サンプル" src={sample} />
         </div>
+        <p>※ 2年生部分のプレイレポートは1年生部分を多めに写すと結合の成功確率が上がります</p>
       </div>
       <div>
         <p>くっつけたいスクリーンショットを2つ、または3つ選択してください(順不同)</p>
@@ -157,8 +158,6 @@ function ConcatPlayReport() {
           >くっつける</button>
       </div>
       <div className='spacer' />
-      <a id='anchor-playreport' href="#bottom"/>
-      <a id='bottom' />
       <div className='center'>
         { waitingResponse ? <h2>Processing...</h2> : <></> }
         { errorOccured    ? <p className='error'>プレイレポートを結合できませんでした <br/> もう一度お試しください</p> : <></> }
@@ -168,6 +167,8 @@ function ConcatPlayReport() {
           result.size > 0 && <img className='result' src={URL.createObjectURL(result)} />
         }
       </div>
+      <a id='anchor-playreport' href="#bottom"/>
+      <a id='bottom' />
     </div>
   )
 }

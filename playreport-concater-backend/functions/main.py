@@ -2,7 +2,6 @@ from firebase_functions import https_fn, options
 from firebase_admin import initialize_app
 from utils import *
 from concater import Concater
-import os
 
 app = initialize_app(name="playreport concat server")
 concater = Concater()
@@ -12,7 +11,7 @@ concater = Concater()
   cors=options.CorsOptions(
     cors_origins=[
       "https://school-idol-stage-supporter.web.app", 
-      "https://school-idol-stage-supporter.firebaseapp.com"
+      "https://school-idol-stage-supporter.firebaseapp.com",
     ],
     cors_methods=["post"]
   )
