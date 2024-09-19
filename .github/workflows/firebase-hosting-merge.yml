@@ -6,8 +6,8 @@ on:
   push:
     branches:
       - develop
-      paths:
-        - "playreport-concater-frontend"
+    paths:
+      - "playreport-concater-frontend"
 defaults:
   run:
     working-directory: playreport-concater-frontend
