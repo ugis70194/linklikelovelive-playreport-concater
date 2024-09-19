@@ -21,8 +21,10 @@ jobs:
         run: bun install
       - name: "build"
         run: bun run build
+      - run: ls
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
+          entryPoint: "."
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCHOOL_IDOL_STAGE_SUPPORTER }}
           channelId: live
