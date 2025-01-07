@@ -6,20 +6,13 @@
 通常、プレイレポートは一部しか表示されません。
 スクロールで全体を確認できますが、他のユーザーと共有する場合には全体が分かるように何枚かに分けてスクリーンショットを撮る必要があります。
 
-![分割したスクリーンショット1]("./img/playreport_split_01.png")
-![分割したスクリーンショット2]("./img/playreport_split_02.png")
-![分割したスクリーンショット3]("./img/playreport_split_03.png")
+![分割したスクリーンショット1]("./img/playreport_bright_0.png")
+![分割したスクリーンショット2]("./img/playreport_bright_1.png")
+![分割したスクリーンショット3]("./img/playreport_bright_2.png")
 
 このツールを使用することで、これらのスクリーンショットを一枚にまとめることができます。
 
 ![結合したスクリーンショット]("./img/concated_playreport.png")
-
-また、スコアに影響するステータス画面やボーナス画面も一緒に結合することができます。
-
-![ステータス画面]("./img/stats.png")
-![ボーナス画面]("./img/bonus.png")
-
-![全体結合]("./img/playreport_all_concat.png")
 
 ## 技術的な話
 
@@ -64,8 +57,7 @@ $h_u$ と $h_b$ が求められたらプレイレポートから必要な部分�
 ![完全版](./img/concated_playreport.png)
 
 別途、ステータス画面やボーナス画面があれば横に連結して出力します。
-
-![ボーナス](./img/with_bonus.png)
+こちらの機能は[pyscript版](https://www.bing.com/search?q=プレイレポート結合ツール&form=ANNTH1&refig=5ca1f78ce8264c0e82e665d56512f785&pc=HCTS)でのみ提供しています。
 
 ## やらなかったこと
 
