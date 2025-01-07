@@ -20,9 +20,6 @@
 
 フロントエンドは firebase hosting で静的サイトとしてホスティングしています。
 
-フロントエンド側で [browser-image-compression](https://www.npmjs.com/package/browser-image-compression) を利用して画像を圧縮。
-圧縮した画像をサーバーに送信し、処理された画像を受け取って表示します。
-
 バックエンドはエンドポイントがひとつなので firebase functions で関数として実装しています。
 
 受け取った画像は numpy の ndarray として受け取ります。
